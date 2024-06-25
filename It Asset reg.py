@@ -114,15 +114,24 @@ def main():
             new_asset = ITAsset(record_number, item_name, imie_number, asset_type, colour, assigned_user_name, assigned_user_department, date_issued)
             assets.append(new_asset)
             print("Record added.")
-        
+
+### added in are you sure question.
+
         elif choice == '3':
             record_number = int(input("Enter the record number to delete: "))
             asset = find_asset_by_record_number(assets, record_number)
             if asset:
-                assets.remove(asset)
-                print("Record deleted.")
+                print("Record to be deleted:")
+                asset.display()
+                confirm = input("Are you sure you want to delete this record? (Y/N): ")
+                if confirm.lower() == 'y':
+                    assets.remove(asset)
+                    print("Record deleted.")
+                else:
+                    print("Deletion cancelled.")
             else:
                 print("Record not found.")
+
         
         elif choice == '4':
             record_number = int(input("Enter the record number to display: "))
@@ -137,8 +146,12 @@ def main():
             display_assets(assets)
         
         elif choice == '6':
-            print("Exiting the program.")
-            break
+            confirm = input("Are you sure you want to exit? (Y/N): ")
+            if confirm.lower() == 'y':
+                print("Exiting the program.")
+                break
+            else:
+                print("Returning to menu.")
         
         else:
             print("Invalid choice. Please try again.")
