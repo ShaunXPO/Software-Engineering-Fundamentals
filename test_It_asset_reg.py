@@ -7,7 +7,7 @@
 ### Without adding this table in I can't seem to get it to test my code. Had to use ChatGPT to understand this and still struggling with the testing.
 
 import pytest
-from it_asset_reg import ITAsset, find_asset_by_record_number, get_valid_date
+from it_asset_reg import ITAsset, find_asset_by_record_number, get_valid_date, get_valid_imie
 
 @pytest.fixture
 def setup_assets():
@@ -39,13 +39,43 @@ def test_find_asset_by_record_number_non_existing(setup_assets):
     assert asset is None
 
 def test_find_asset_by_record_number_alpha(setup_assets):
-    # Test case for a record number input as an alpha
+    # Test case for a record number input as a non-integer ('Dad')
     assets = setup_assets
-    with pytest.raises(TypeError):
-        find_asset_by_record_number(assets, "Dad")
+    asset = find_asset_by_record_number(assets, 'Dad')
+    assert asset is None
 
-def test_get_valid_date_valid_format():
+def test_get_valid_date_valid_format(monkeypatch):
     # Test valid date format
     date_str = "15.04.2023"
-    with pytest.raises(StopIteration):
-        input_mock = lambda : date_str
+    
+    # Mock input() function to return date_str
+    monkeypatch.setattr('builtins.input', lambda _: date_str)
+    
+    # Call get_valid_date() which should return the validated date
+    validated_date = get_valid_date()
+    
+    # Assert that the returned date matches the expected date_str
+    assert validated_date == date_str
+
+import pytest
+from it_asset_reg import get_valid_imie
+
+def test_get_valid_imie(monkeypatch):
+    # Test valid IMIE number
+    valid_input = "123456789012345"
+    monkeypatch.setattr('builtins.input', lambda _: valid_input)
+    validated_imie = get_valid_imie()
+    assert validated_imie == int(valid_input)
+
+    # Test invalid IMIE number (non-integer input)
+    invalid_input = "not_an_integer"
+    monkeypatch.setattr('builtins.input', lambda _: invalid_input)
+    with pytest.raises(ValueError):
+        get_valid_imie()
+
+    # Test invalid IMIE number (empty input)
+    empty_input = ""
+    monkeypatch.setattr('builtins.input', lambda _: empty_input)
+    with pytest.raises(ValueError):
+        get_valid_imie()
+
