@@ -57,9 +57,6 @@ def test_get_valid_date_valid_format(monkeypatch):
     # Assert that the returned date matches the expected date_str
     assert validated_date == date_str
 
-import pytest
-from it_asset_reg import get_valid_imie
-
 def test_get_valid_imie(monkeypatch):
     # Test valid IMIE number
     valid_input = "123456789012345"
